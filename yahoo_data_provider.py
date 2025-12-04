@@ -26,7 +26,7 @@ class YahooForexDataProvider:
         self._cb = cb
 
     def _get_latest_price(self):
-        data = yf.download(self.symbol, period="1d", interval="1m")
+        data = yf.download(self.symbol, period="2m", interval="1m")
         if data.empty:
             return None
         

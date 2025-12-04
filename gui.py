@@ -46,6 +46,7 @@ class ForexBotGUI:
         self._log("Started")
 
     def stop(self):
+        self._running = False 
         self.stop_cb()
         self._log("Stopped")
 
@@ -53,6 +54,15 @@ class ForexBotGUI:
         ts = time.strftime("%H:%M:%S")
         self.log.insert(tk.END, f"[{ts}] {txt}\n")
         self.log.see(tk.END)
+    def _log_once(self, txt):
+        """
+        Logs only when message changes — prevents GUI from spamming the same
+        position update every second.
+        """
+        if getattr(self, "_last_log", None) != txt:
+            self._log(txt)
+            self._last_log = txt
+
 
     def _update_loop(self):
         state = self.get_state()
@@ -64,12 +74,17 @@ class ForexBotGUI:
             if closes:
                 self.ax.plot(times, closes)
             positions = state.get("positions", {})
-            for i, (sym, pos) in enumerate(positions.items()):
-                self._log(f"Pos {sym}: {pos.side} size={pos.size:.2f} entry={pos.entry_price:.5f} pnl={pos.unrealized_pnl:.2f}")
+            for sym, pos in positions.items():
+                msg = (
+                     f"Pos {sym}: {pos.side} size={pos.size:.2f} "
+                    f"entry={pos.entry_price:.5f} pnl={pos.unrealized_pnl:.2f}"
+                )
+                self._log_once(msg)
+
         # schedule next update
         if self._running:
             self.canvas.draw()
-            self.root.after(1000, self._update_loop)
+            self.root.after(3000, self._update_loop)
 
     def shutdown(self):
         self._running = False

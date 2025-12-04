@@ -19,7 +19,7 @@ class StrategyBase(ABC):
 
 class MovingAverageCrossStrategy(StrategyBase):
     """
-    Simple SMA fast/slow crossover. Demonstrates OOP inheritance and state.
+    Simple SMA fast/slow crossover. 
     """
     def __init__(self, ma_fast=config.MA_FAST, ma_slow=config.MA_SLOW):
         super().__init__()

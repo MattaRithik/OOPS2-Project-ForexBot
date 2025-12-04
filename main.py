@@ -1,7 +1,6 @@
 # main.py
 import threading
 import time
-# from data_provider import MockDataProvider
 from yahoo_data_provider import YahooForexDataProvider
 from strategy import MovingAverageCrossStrategy
 from broker import PaperBroker
@@ -21,10 +20,11 @@ class ForexBotApp:
         self._closes = []
 
     def on_candle(self, candle):
-        # feed strategy
-        sig = self.strategy.on_candle(candle)
+        
         # update broker unrealized
         self.broker.update_unrealized(config.SYMBOL, candle.close)
+        # feed strategy
+        sig = self.strategy.on_candle(candle)
         # bookkeeping for GUI
         self._closes.append(candle.close)
         if sig:
